@@ -11,11 +11,6 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
-import paddle
-import paddle.utils
-
-paddle.utils.run_check()
-
 from paddlenlp import SimpleServer, Taskflow
 
 # The schema changed to your defined schema
@@ -24,7 +19,7 @@ schema = ["开票日期", "名称", "纳税人识别号", "开户行及账号", 
 uie = Taskflow(
     "information_extraction",
     schema=schema,
-    # task_path="../../checkpoint/model_best",
+    task_path="../../checkpoint/model_best",
 )
 # If you want to define the finetuned uie service
 app = SimpleServer()

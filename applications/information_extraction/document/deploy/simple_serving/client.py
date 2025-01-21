@@ -21,7 +21,7 @@ from paddlenlp.utils.doc_parser import DocParser
 # Define the document parser
 doc_parser = DocParser()
 
-image_paths = ["../../data/images/b1.jpg"]
+image_paths = ["D:/liyk/PaddleNLP-2.6.1/applications/information_extraction/document/data/images/b1.jpg"]
 image_base64_docs = []
 
 # Get the image base64 to post
@@ -32,7 +32,7 @@ for image_path in image_paths:
     req_dict["doc"] = base64
     image_base64_docs.append(req_dict)
 
-url = "http://0.0.0.0:8189/taskflow/uie"
+url = "http://127.0.0.1:8189/taskflow/uie"
 headers = {"Content-Type": "application/json"}
 data = {"data": {"text": image_base64_docs}}
 

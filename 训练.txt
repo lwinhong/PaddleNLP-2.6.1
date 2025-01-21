@@ -1,0 +1,30 @@
+数据生成
+
+python label_studio.py  --label_studio_file ./data/label_studio.json  --save_dir ./data  --splits 0.8 0.1 0.1  --task_type ext  --layout_analysis True
+
+微调训练
+python finetune.py   --device gpu   --logging_steps 10   --save_steps 100  --eval_steps 100  --seed 1000  --model_name_or_path uie-x-base  --output_dir ./checkpoint/model_best --train_path data/train.txt  --dev_path data/dev.txt  --max_seq_len 512  --per_device_train_batch_size  8  --per_device_eval_batch_size 8  --num_train_epochs 20 --learning_rate 1e-5  --do_train  --do_eval  --do_export True  --export_model_dir ./checkpoint/model_best/static   --overwrite_output_dir False  --disable_tqdm True --metric_for_best_model eval_f1   --load_best_model_at_end  True    --save_total_limit 1 --label_names 'start_positions' 'end_positions'
+
+评估
+python evaluate.py  --device gpu   --model_path ./checkpoint/model_best   --test_path ./data/dev.txt  --output_dir ./checkpoint/model_best   --label_names 'start_positions' 'end_positions'  --max_seq_len 512   --per_device_eval_batch_size 16 --debug
+
+蒸馏
+python data_distill.py    --data_path D:\liyk\PaddleNLP\slm\applications\information_extraction\document\data     --save_dir student_data   --task_type relation_extraction   --synthetic_ratio 10   --model_path D:\liyk\PaddleNLP\slm\applications\information_extraction\document/checkpoint/model_best
+
+
+服务运行
+paddlenlp server server:app --workers 1 --host 0.0.0.0 --port 8189
+
+
+paddle2onnx --model_dir ./checkpoint/model_best --model_filename inference.pdmodel --params_filename inference.pdiparams   --save_file ./checkpoint/model_best/model.onnx --opset_version 11 --enable_onnx_checker True
+
+python label_studio.py  --label_studio_file ./data/label_studio.json  --save_dir ./data   --splits 0.8 0.1 0.1   --task_type ext
+
+
+medel_zoo
+
+python doccano.py   --doccano_file ./data/doccano_ext.json     --task_type ext     --save_dir ./data    --splits 0.8 0.2 0    --schema_lang ch
+
+python finetune.py   --device gpu   --logging_steps 10     --save_steps 100   --eval_steps 100   --seed 42   --model_name_or_path uie-base    --output_dir ./checkpoint/model_best  --train_path data/train.txt     --dev_path data/dev.txt    --max_seq_length 512    --per_device_eval_batch_size 8    --per_device_train_batch_size  8  --num_train_epochs 20  --learning_rate 1e-5   --label_names "start_positions" "end_positions"   --do_train  --do_eval  --do_export True  --export_model_dir ./checkpoint/model_best/static  --overwrite_output_dir   --disable_tqdm True     --metric_for_best_model eval_f1  --load_best_model_at_end  True    --save_total_limit 1
+
+python evaluate.py  --model_path ./checkpoint/model_best  --test_path ./data/dev.txt    --batch_size 16   --max_seq_len 512
